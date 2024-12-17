@@ -281,46 +281,50 @@
                 return sentences[Math.floor(Math.random() * sentences.length)];
             }
 
+
             function setupDragAndDrop(sentence) {
-    const words = sentence.en.split(" ").sort(() => Math.random() - 0.5);
-    const wordBank = document.getElementById("wordBank");
-    const sentenceContainer = document.getElementById("sentenceContainer");
-    const instruction = document.getElementById("instruction");
 
-    instruction.textContent = `"${sentence.ru}"`;
-    wordBank.innerHTML = "";
-    sentenceContainer.innerHTML = "";
-    feedback.textContent = "";
 
-    words.forEach(word => {
-        const wordElement = document.createElement("span");
-        wordElement.textContent = word;
-        wordElement.classList.add("word");
+                const words = sentence.en.split(" ").sort(() => Math.random() - 0.5);
+                const wordBank = document.getElementById("wordBank");
+                const sentenceContainer = document.getElementById("sentenceContainer");
+                const instruction = document.getElementById("instruction");
 
-        wordElement.addEventListener("click", () => {
-            if (wordElement.parentElement === wordBank) {
-                sentenceContainer.appendChild(wordElement);
-            } else {
+                instruction.textContent = `"${sentence.ru}"`;
+                wordBank.innerHTML = "";
+                sentenceContainer.innerHTML = "";
+                feedback.textContent = "";
+
+
+            words.forEach(word => {
+                const wordElement = document.createElement("span");
+                wordElement.textContent = word;
+                wordElement.classList.add("word");
+
+                wordElement.addEventListener("click", () => {
+                    if (wordElement.parentElement === wordBank) {
+                        sentenceContainer.appendChild(wordElement);
+                    } else {
+                        wordBank.appendChild(wordElement);
+                    }
+                });
+
                 wordBank.appendChild(wordElement);
-            }
-        });
+            });
 
-        wordBank.appendChild(wordElement);
-    });
-
-    checkButton.onclick = () => {
-        const userSentence = Array.from(sentenceContainer.children)
-            .map(wordElement => wordElement.textContent)
-            .join(" ");
-            playAudio(sentence.en); // Play the correct sentence
-        if (userSentence === sentence.en) {
-            feedback.textContent = "Верно! 👍";
-            feedback.style.color = "green";
-        } else {
-            feedback.textContent = "Неверно 👎";
-            feedback.style.color = "red";
-        }
-    };
+            checkButton.onclick = () => {
+                const userSentence = Array.from(sentenceContainer.children)
+                    .map(wordElement => wordElement.textContent)
+                    .join(" ");
+                    playAudio(sentence.en); // Play the correct sentence
+                if (userSentence === sentence.en) {
+                    feedback.textContent = "Верно! 👍";
+                    feedback.style.color = "green";
+                } else {
+                    feedback.textContent = "Неверно 👎";
+                    feedback.style.color = "red";
+                }
+            };
 }
 
             // Генерация первого урока при загрузке
