@@ -52,7 +52,7 @@
             min-height: 50px;
         }
 
-        #wordBank, #sentenceContainer {
+       #wordBank, #sentenceContainer {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -60,16 +60,15 @@
             gap: 10px;
             padding: 10px;
             min-height: 100px;
-            min-width: 1000px;
-            max-height: 120px;
-            width: 80%;
-            max-width: 600px;
-            margin: 10px 0;
-            background-color: transparent; /* прозрачный фон */
-            border: none; /* убираем контур */
-            box-shadow: none; /* убираем тень */
+            width: 90%; /* Адаптивная ширина */
+            max-width: 600px; /* Максимальная ширина */
+            margin: 10px auto; /* Центрирование */
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
             overflow-y: auto;
-        }
+}
+
 
 
         .word {
@@ -125,6 +124,20 @@
             font-weight: bold;
             color: black;
         }
+
+            @media (max-width: 768px) {
+        #wordBank, #sentenceContainer {
+            width: 95%; /* Увеличиваем ширину для мобильных устройств */
+            min-height: 80px; /* Немного уменьшаем высоту */
+        }
+    
+        .word {
+            font-size: 0.9rem; /* Уменьшаем размер шрифта для слов */
+            padding: 8px 12px; /* Подгоняем отступы */
+        }
+    }
+
+        
     </style>
 </head>
 <body>
