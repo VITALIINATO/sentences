@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Building Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        #generateLesson {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #ffc107;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #generateLesson:hover {
+            background: #e0a800;
+            transform: scale(1.05);
+        }
+
+        #instruction {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            min-height: 50px;
+        }
+
+        #wordBank, #sentenceContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            min-height: 100px;
+            min-width: 1000px;
+            max-height: 120px;
+            width: 80%;
+            max-width: 600px;
+            margin: 10px 0;
+            background-color: transparent; /* прозрачный фон */
+            border: none; /* убираем контур */
+            box-shadow: none; /* убираем тень */
+            overflow-y: auto;
+        }
+
+
+        .word {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+            min-width: 70px;
+            display: inline-block;
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .word:hover {
+            background: #0056b3;
+            transform: scale(1.1);
+        }
+
+        .check-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        #checkSentence {
+            min-width: 80px;
+            min-height: 44px;
+            padding: 10px 18px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        #checkSentence:hover {
+            background: #218838;
+            transform: scale(1.1);
+        }
+
+        #feedback {
+            padding: 10px 18px;
+            min-width: 80px;
+            min-height: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sentence Building Game</h1>
+    <div>
+        <p id="instruction"></p>
+       
+        <div id="sentenceContainer"></div>
+        <div id="wordBank"></div>
+
+        <div class="check-container">
+            <button id="checkSentence">Проверить</button>
+            <p id="feedback"></p>
+        </div>
+
+        <button id="generateLesson">NEXT</button>
+    </div>
+
+    <script>
+        const sentences = [
+            { en: "I run every morning in the park.", ru: "Я бегаю каждое утро в парке." },
+            { en: "She does not run fast in the race.", ru: "Она не бегает быстро на гонке." },
+            { en: "Do they run to school every day?", ru: "Они бегают в школу каждый день?" },
+            { en: "You are running in the park now.", ru: "Ты сейчас бегаешь в парке." },
+            { en: "He is not running because he is tired.", ru: "Он не бегает, потому что устал." },
+            { en: "Are we running in the right direction?", ru: "Мы бежим в правильном направлении?" },
+            { en: "We ran quickly yesterday evening.", ru: "Мы быстро бежали вчера вечером." },
+            { en: "They did not run at all during the game.", ru: "Они совсем не бегали во время игры." },
+            { en: "Did she run to catch the bus?", ru: "Она бежала, чтобы успеть на автобус?" },
+            { en: "I was running when it started raining.", ru: "Я бежал, когда начался дождь." },
+            { en: "We were not running because it was too hot.", ru: "Мы не бежали, потому что было слишком жарко." },
+            { en: "Were they running when the alarm went off?", ru: "Они бежали, когда сработала тревога?" },
+            { en: "They will run in the marathon tomorrow.", ru: "Они побегут в марафоне завтра." },
+            { en: "She will not run because of her injury.", ru: "Она не побежит из-за травмы." },
+            { en: "Will he run with us this weekend?", ru: "Он побежит с нами на выходных?" },
+            { en: "She has run this track before.", ru: "Она уже бегала по этой дорожке." },
+            { en: "We have not run in this area recently.", ru: "Мы давно не бегали в этом районе." },
+            { en: "Have you run a marathon before?", ru: "Ты когда-нибудь бегал марафон?" },
+            { en: "We had run five miles before breakfast.", ru: "Мы пробежали пять миль до завтрака." },
+            { en: "They had not run this far in years.", ru: "Они не бегали так далеко уже много лет." },
+            { en: "Had he run the race before the rain started?", ru: "Он пробежал гонку до того, как начался дождь?" },
+            
+            { en: "I usually eat breakfast at 8 a.m.", ru: "Я обычно завтракаю в 8 утра." },
+            { en: "He does not eat meat on Fridays.", ru: "Он не ест мясо по пятницам." },
+            { en: "Do they eat at this restaurant often?", ru: "Они часто едят в этом ресторане?" },
+            { en: "You are eating lunch right now.", ru: "Ты сейчас обедаешь." },
+            { en: "She is not eating because she feels unwell.", ru: "Она не ест, потому что плохо себя чувствует." },
+            { en: "Are we eating together today?", ru: "Мы будем есть вместе сегодня?" },
+            { en: "He ate pizza for dinner last night.", ru: "Он ел пиццу на ужин вчера вечером." },
+            { en: "We did not eat anything at the party.", ru: "Мы ничего не ели на вечеринке." },
+            { en: "Did you eat the cake I made?", ru: "Ты съел торт, который я приготовил?" },
+            { en: "We were eating when the phone rang.", ru: "Мы ели, когда зазвонил телефон." },
+            { en: "They were not eating because the food was cold.", ru: "Они не ели, потому что еда была холодной." },
+            { en: "Was she eating when you arrived?", ru: "Она ела, когда ты пришёл?" },
+            { en: "They will eat at the new restaurant tomorrow.", ru: "Они будут есть в новом ресторане завтра." },
+            { en: "I will not eat dessert today.", ru: "Я не буду есть десерт сегодня." },
+            { en: "Will you eat with us tonight?", ru: "Ты будешь есть с нами сегодня вечером?" },
+            { en: "She has eaten sushi many times.", ru: "Она много раз ела суши." },
+            { en: "We have not eaten anything all day.", ru: "Мы ничего не ели весь день." },
+            { en: "Have they eaten at this café before?", ru: "Они ели в этом кафе раньше?" },
+            { en: "We had eaten before the meeting started.", ru: "Мы поели до того, как началась встреча." },
+            { en: "They had not eaten by the time we arrived.", ru: "Они не поели к моменту нашего приезда." },
+            { en: "Had she eaten lunch before going out?", ru: "Она пообедала перед выходом?" },
+            
+            { en: "I read books every evening.", ru: "Я читаю книги каждый вечер." },
+            { en: "He does not read newspapers.", ru: "Он не читает газеты." },
+            { en: "Do they read often?", ru: "Они часто читают?" },
+            { en: "She is reading a novel now.", ru: "Она сейчас читает роман." },
+            { en: "We are not reading because we are busy.", ru: "Мы не читаем, потому что заняты." },
+            { en: "Are they reading the report?", ru: "Они читают отчёт?" },
+            { en: "He read an article yesterday.", ru: "Он прочитал статью вчера." },
+            { en: "They did not read the instructions.", ru: "Они не прочитали инструкции." },
+            { en: "Did she read the email?", ru: "Она прочитала электронное письмо?" },
+            { en: "I was reading when the phone rang.", ru: "Я читал, когда зазвонил телефон." },
+            { en: "They were not reading at that time.", ru: "Они не читали в то время." },
+            { en: "Was she reading during the lecture?", ru: "Она читала во время лекции?" },
+            { en: "We will read this book tomorrow.", ru: "Мы прочитаем эту книгу завтра." },
+            { en: "She will not read until next week.", ru: "Она не будет читать до следующей недели." },
+            { en: "Will you read with us tonight?", ru: "Ты будешь читать с нами сегодня вечером?" },
+            { en: "He has read that story before.", ru: "Он уже читал эту историю раньше." },
+            { en: "They have not read the new rules.", ru: "Они не прочитали новые правила." },
+            { en: "Have you read this book yet?", ru: "Ты уже прочитал эту книгу?" },
+            { en: "I had read the novel before the movie came out.", ru: "Я прочитал роман до выхода фильма." },
+            { en: "They had not read the instructions before starting.", ru: "Они не прочитали инструкции перед началом." },
+            { en: "Had she read the book before the test?", ru: "Она прочитала книгу перед тестом?" },
+
+            { en: "I run every morning in the park.", ru: "Я бегаю каждое утро в парке." },
+            { en: "She does not run fast in the race.", ru: "Она не бегает быстро на гонке." },
+            { en: "Do they run to school every day?", ru: "Они бегают в школу каждый день?" },
+            { en: "You are running in the park now.", ru: "Ты сейчас бегаешь в парке." },
+            { en: "He is not running because he is tired.", ru: "Он не бежит, потому что устал." },
+            { en: "Are we running in the right direction?", ru: "Мы бежим в правильном направлении?" },
+            { en: "We ran quickly yesterday evening.", ru: "Мы быстро бежали вчера вечером." },
+            { en: "They did not run at all during the game.", ru: "Они совсем не бегали во время игры." },
+            { en: "Did she run to catch the bus?", ru: "Она бежала, чтобы успеть на автобус?" },
+            { en: "I was running when it started raining.", ru: "Я бежал, когда начался дождь." },
+            { en: "They will run in the marathon tomorrow.", ru: "Они побегут в марафоне завтра." },
+            { en: "She will not run because of her injury.", ru: "Она не побежит из-за травмы." },
+
+            // Write Sentences
+            { en: "I write emails every morning.", ru: "Я пишу электронные письма каждое утро." },
+            { en: "He does not write poems in his free time.", ru: "Он не пишет стихи в свободное время." },
+            { en: "Do they write letters to their friends often?", ru: "Они часто пишут письма своим друзьям?" },
+
+            // Present Continuous
+            { en: "She is writing a novel right now.", ru: "Она сейчас пишет роман." },
+            { en: "They are not writing their homework at the moment.", ru: "Они сейчас не пишут домашнюю работу." },
+            { en: "Are you writing a letter to your cousin?", ru: "Ты пишешь письмо своему двоюродному брату?" },
+
+            // Past Simple
+            { en: "He wrote a report yesterday.", ru: "Он написал отчёт вчера." },
+            { en: "We did not write anything during the meeting.", ru: "Мы ничего не писали во время встречи." },
+            { en: "Did she write the essay last night?", ru: "Она написала эссе вчера вечером?" },
+
+            // Past Continuous
+            { en: "I was writing a letter when the phone rang.", ru: "Я писал письмо, когда зазвонил телефон." },
+            { en: "They were not writing when I entered the room.", ru: "Они не писали, когда я вошёл в комнату." },
+            { en: "Was he writing the project at 5 p.m. yesterday?", ru: "Он писал проект в 5 вечера вчера?" },
+
+            // Future Simple
+            { en: "She will write a new story tomorrow.", ru: "Она напишет новый рассказ завтра." },
+            { en: "I will not write to him anymore.", ru: "Я больше не буду ему писать." },
+            { en: "Will they write the article by next week?", ru: "Они напишут статью к следующей неделе?" },
+
+            // Present Perfect
+            { en: "He has already written the introduction.", ru: "Он уже написал введение." },
+            { en: "We have not written any new chapters yet.", ru: "Мы ещё не написали ни одной новой главы." },
+            { en: "Have you written the notes for the lecture?", ru: "Ты написал конспект лекции?" },
+
+            // Past Perfect
+            { en: "She had written the book before it was published.", ru: "Она написала книгу до её публикации." },
+            { en: "They had not written the code before the deadline.", ru: "Они не написали код до крайнего срока." },
+            { en: "Had you written your homework before the teacher arrived?", ru: "Ты сделал домашнюю работу до прихода учителя?" }
+
+        ];
+
+        function playAudio(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // Set language to English (US)
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Speech synthesis is not supported in your browser.");
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const generateButton = document.getElementById("generateLesson");
+            const checkButton = document.getElementById("checkSentence");
+            const feedback = document.getElementById("feedback");
+
+            function getRandomSentence() {
+                return sentences[Math.floor(Math.random() * sentences.length)];
+            }
+
+            function setupDragAndDrop(sentence) {
+    const words = sentence.en.split(" ").sort(() => Math.random() - 0.5);
+    const wordBank = document.getElementById("wordBank");
+    const sentenceContainer = document.getElementById("sentenceContainer");
+    const instruction = document.getElementById("instruction");
+
+    instruction.textContent = `"${sentence.ru}"`;
+    wordBank.innerHTML = "";
+    sentenceContainer.innerHTML = "";
+    feedback.textContent = "";
+
+    words.forEach(word => {
+        const wordElement = document.createElement("span");
+        wordElement.textContent = word;
+        wordElement.classList.add("word");
+
+        wordElement.addEventListener("click", () => {
+            if (wordElement.parentElement === wordBank) {
+                sentenceContainer.appendChild(wordElement);
+            } else {
+                wordBank.appendChild(wordElement);
+            }
+        });
+
+        wordBank.appendChild(wordElement);
+    });
+
+    checkButton.onclick = () => {
+        const userSentence = Array.from(sentenceContainer.children)
+            .map(wordElement => wordElement.textContent)
+            .join(" ");
+            playAudio(sentence.en); // Play the correct sentence
+        if (userSentence === sentence.en) {
+            feedback.textContent = "Верно! 👍";
+            feedback.style.color = "green";
+        } else {
+            feedback.textContent = "Неверно 👎";
+            feedback.style.color = "red";
+        }
+    };
+}
+
+            // Генерация первого урока при загрузке
+            setupDragAndDrop(getRandomSentence());
+
+            generateButton.addEventListener("click", () => {
+                setupDragAndDrop(getRandomSentence());
+            });
+        });
+    </script>
+</body>
+</html>
