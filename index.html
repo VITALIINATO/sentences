@@ -24,22 +24,42 @@
             text-align: center;
         }
 
-        #generateLesson {
-            display: block;
-            margin: 20px auto;
+        #generateLesson, #previousLesson {
+            display: inline-block;
+            min-width: 140px;
+            margin: 20px 10px;
             padding: 10px 20px;
             background: #ffc107;
             color: black;
             border: none;
-            border-radius: 5px;
+            border-radius: 15px;
             cursor: pointer;
             font-size: 18px;
             transition: background 0.3s, transform 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        #generateLesson:hover {
+        .index-button {
+            display: inline-block;
+            margin: 20px 10px;
+            padding: 10px 20px;
+            background: #b4b2ac;
+            color: black;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font: bold;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #generateLesson:hover, #previousLesson:hover {
             background: #e0a800;
+            transform: scale(1.05);
+        }
+         .index-button:hover {
+            background: #666560;
             transform: scale(1.05);
         }
 
@@ -52,7 +72,7 @@
             min-height: 50px;
         }
 
-       #wordBank, #sentenceContainer {
+        #wordBank, #sentenceContainer {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -60,16 +80,16 @@
             gap: 10px;
             padding: 10px;
             min-height: 100px;
-            width: 90%; /* Адаптивная ширина */
-            max-width: 600px; /* Максимальная ширина */
-            margin: 10px auto; /* Центрирование */
+            min-width: 1100px;
+            max-height: 120px;
+            width: 80%;
+            max-width: 600px;
+            margin: 10px 0;
             background-color: transparent;
             border: none;
             box-shadow: none;
             overflow-y: auto;
-}
-
-
+        }
 
         .word {
             padding: 10px 15px;
@@ -87,7 +107,7 @@
 
         .word:hover {
             background: #0056b3;
-            transform: scale(1.1);
+            transform: scale(1.01);
         }
 
         .check-container {
@@ -116,6 +136,10 @@
             transform: scale(1.1);
         }
 
+        div.button-container {
+            text-align: center;
+        }
+
         #feedback {
             padding: 10px 18px;
             min-width: 80px;
@@ -125,189 +149,185 @@
             color: black;
         }
 
-            @media (max-width: 768px) {
-        #wordBank, #sentenceContainer {
-            width: 95%; /* Увеличиваем ширину для мобильных устройств */
-            min-height: 80px; /* Немного уменьшаем высоту */
+        .index-buttons-container {
+            margin-top: 10px;
+            text-align: center;
         }
-    
-        .word {
-            font-size: 0.9rem; /* Уменьшаем размер шрифта для слов */
-            padding: 8px 12px; /* Подгоняем отступы */
-        }
-    }
-
-        
     </style>
 </head>
 <body>
-    <h1>Sentence Building Game</h1>
+    <h1>Exercise 2</h1>
     <div>
         <p id="instruction"></p>
-       
         <div id="sentenceContainer"></div>
         <div id="wordBank"></div>
-
         <div class="check-container">
             <button id="checkSentence">Проверить</button>
             <p id="feedback"></p>
         </div>
-
-        <button id="generateLesson">NEXT</button>
+        <div class="button-container">
+            <button id="previousLesson">PREVIOUS</button>
+            <button id="generateLesson">NEXT</button>
+        </div>
+        <div class="index-buttons-container">
+            <button class="index-button" data-index="0">admit</button>
+            <button class="index-button" data-index="21">advise</button>
+            <button class="index-button" data-index="42">convince</button>
+            <button class="index-button" data-index="63">mention</button>
+        </div>
     </div>
 
     <script>
         const sentences = [
-            { en: "I run every morning in the park.", ru: "Я бегаю каждое утро в парке." },
-            { en: "She does not run fast in the race.", ru: "Она не бегает быстро на гонке." },
-            { en: "Do they run to school every day?", ru: "Они бегают в школу каждый день?" },
-            { en: "You are running in the park now.", ru: "Ты сейчас бегаешь в парке." },
-            { en: "He is not running because he is tired.", ru: "Он не бегает, потому что устал." },
-            { en: "Are we running in the right direction?", ru: "Мы бежим в правильном направлении?" },
-            { en: "We ran quickly yesterday evening.", ru: "Мы быстро бежали вчера вечером." },
-            { en: "They did not run at all during the game.", ru: "Они совсем не бегали во время игры." },
-            { en: "Did she run to catch the bus?", ru: "Она бежала, чтобы успеть на автобус?" },
-            { en: "I was running when it started raining.", ru: "Я бежал, когда начался дождь." },
-            { en: "We were not running because it was too hot.", ru: "Мы не бежали, потому что было слишком жарко." },
-            { en: "Were they running when the alarm went off?", ru: "Они бежали, когда сработала тревога?" },
-            { en: "They will run in the marathon tomorrow.", ru: "Они побегут в марафоне завтра." },
-            { en: "She will not run because of her injury.", ru: "Она не побежит из-за травмы." },
-            { en: "Will he run with us this weekend?", ru: "Он побежит с нами на выходных?" },
-            { en: "She has run this track before.", ru: "Она уже бегала по этой дорожке." },
-            { en: "We have not run in this area recently.", ru: "Мы давно не бегали в этом районе." },
-            { en: "Have you run a marathon before?", ru: "Ты когда-нибудь бегал марафон?" },
-            { en: "We had run five miles before breakfast.", ru: "Мы пробежали пять миль до завтрака." },
-            { en: "They had not run this far in years.", ru: "Они не бегали так далеко уже много лет." },
-            { en: "Had he run the race before the rain started?", ru: "Он пробежал гонку до того, как начался дождь?" },
             
-            { en: "I usually eat breakfast at 8 a.m.", ru: "Я обычно завтракаю в 8 утра." },
-            { en: "He does not eat meat on Fridays.", ru: "Он не ест мясо по пятницам." },
-            { en: "Do they eat at this restaurant often?", ru: "Они часто едят в этом ресторане?" },
-            { en: "You are eating lunch right now.", ru: "Ты сейчас обедаешь." },
-            { en: "She is not eating because she feels unwell.", ru: "Она не ест, потому что плохо себя чувствует." },
-            { en: "Are we eating together today?", ru: "Мы будем есть вместе сегодня?" },
-            { en: "He ate pizza for dinner last night.", ru: "Он ел пиццу на ужин вчера вечером." },
-            { en: "We did not eat anything at the party.", ru: "Мы ничего не ели на вечеринке." },
-            { en: "Did you eat the cake I made?", ru: "Ты съел торт, который я приготовил?" },
-            { en: "We were eating when the phone rang.", ru: "Мы ели, когда зазвонил телефон." },
-            { en: "They were not eating because the food was cold.", ru: "Они не ели, потому что еда была холодной." },
-            { en: "Was she eating when you arrived?", ru: "Она ела, когда ты пришёл?" },
-            { en: "They will eat at the new restaurant tomorrow.", ru: "Они будут есть в новом ресторане завтра." },
-            { en: "I will not eat dessert today.", ru: "Я не буду есть десерт сегодня." },
-            { en: "Will you eat with us tonight?", ru: "Ты будешь есть с нами сегодня вечером?" },
-            { en: "She has eaten sushi many times.", ru: "Она много раз ела суши." },
-            { en: "We have not eaten anything all day.", ru: "Мы ничего не ели весь день." },
-            { en: "Have they eaten at this café before?", ru: "Они ели в этом кафе раньше?" },
-            { en: "We had eaten before the meeting started.", ru: "Мы поели до того, как началась встреча." },
-            { en: "They had not eaten by the time we arrived.", ru: "Они не поели к моменту нашего приезда." },
-            { en: "Had she eaten lunch before going out?", ru: "Она пообедала перед выходом?" },
-            
-            { en: "I read books every evening.", ru: "Я читаю книги каждый вечер." },
-            { en: "He does not read newspapers.", ru: "Он не читает газеты." },
-            { en: "Do they read often?", ru: "Они часто читают?" },
-            { en: "She is reading a novel now.", ru: "Она сейчас читает роман." },
-            { en: "We are not reading because we are busy.", ru: "Мы не читаем, потому что заняты." },
-            { en: "Are they reading the report?", ru: "Они читают отчёт?" },
-            { en: "He read an article yesterday.", ru: "Он прочитал статью вчера." },
-            { en: "They did not read the instructions.", ru: "Они не прочитали инструкции." },
-            { en: "Did she read the email?", ru: "Она прочитала электронное письмо?" },
-            { en: "I was reading when the phone rang.", ru: "Я читал, когда зазвонил телефон." },
-            { en: "They were not reading at that time.", ru: "Они не читали в то время." },
-            { en: "Was she reading during the lecture?", ru: "Она читала во время лекции?" },
-            { en: "We will read this book tomorrow.", ru: "Мы прочитаем эту книгу завтра." },
-            { en: "She will not read until next week.", ru: "Она не будет читать до следующей недели." },
-            { en: "Will you read with us tonight?", ru: "Ты будешь читать с нами сегодня вечером?" },
-            { en: "He has read that story before.", ru: "Он уже читал эту историю раньше." },
-            { en: "They have not read the new rules.", ru: "Они не прочитали новые правила." },
-            { en: "Have you read this book yet?", ru: "Ты уже прочитал эту книгу?" },
-            { en: "I had read the novel before the movie came out.", ru: "Я прочитал роман до выхода фильма." },
-            { en: "They had not read the instructions before starting.", ru: "Они не прочитали инструкции перед началом." },
-            { en: "Had she read the book before the test?", ru: "Она прочитала книгу перед тестом?" },
+    // admit
+// Present Simple
+{ en: "He always admits his mistakes when he is wrong.", ru: "Он всегда признаёт свои ошибки, когда он неправ." },
+{ en: "She does not admit her fears to anyone.", ru: "Она не признаётся в своих страхах кому-либо." },
+{ en: "Do they often admit their faults in arguments?", ru: "Они часто признают свои ошибки в спорах?" },
+// Present Continuous
+{ en: "He is currently admitting his role in the incident.", ru: "Он в настоящее время признаёт свою роль в инциденте." },
+{ en: "They are not admitting anything at the moment.", ru: "Они сейчас ничего не признают." },
+{ en: "Are you honestly admitting your part in this mistake?", ru: "Ты честно признаёшь свою роль в этой ошибке?" },
+// Present Perfect
+{ en: "He has already admitted everything honestly.", ru: "Он уже признал всё честно." },
+{ en: "They have not yet admitted their failure openly.", ru: "Они ещё не признали свой провал открыто." },
+{ en: "Have you recently admitted your role in the project?", ru: "Ты недавно признал свою роль в проекте?" },
+// Past Simple
+{ en: "She finally admitted her guilt yesterday.", ru: "Она наконец признала свою вину вчера." },
+{ en: "He never admitted his involvement in the past.", ru: "Он никогда не признавал своё участие в прошлом." },
+{ en: "Did they openly admit the truth during the meeting?", ru: "Они открыто признали правду на встрече?" },
+// Past Continuous
+{ en: "He was reluctantly admitting the facts when I arrived.", ru: "Он неохотно признавал факты, когда я приехал." },
+{ en: "They were not sincerely admitting their mistakes during the discussion.", ru: "Они не искренне признавали свои ошибки во время обсуждения." },
+{ en: "Was she honestly admitting her part in the failure yesterday?", ru: "Она вчера честно признавала свою часть в провале?" },
+// Past Perfect
+{ en: "She had never admitted her guilt until it was proven.", ru: "Она никогда не признавала свою вину, пока это не было доказано." },
+{ en: "They had not publicly admitted their mistake before the report came out.", ru: "Они не признавали свою ошибку публично до выхода отчёта." },
+{ en: "Had he already admitted his responsibility when you confronted him?", ru: "Он уже признал свою ответственность, когда ты с ним столкнулся?" },
+// Future Simple
+{ en: "He will surely admit the truth tomorrow.", ru: "Он наверняка признает правду завтра." },
+{ en: "I will not easily admit my faults in the future.", ru: "Я не буду легко признавать свои ошибки в будущем." },
+{ en: "Will they eventually admit their mistake next week?", ru: "Они в конце концов признают свою ошибку на следующей неделе?" },
 
-            { en: "I run every morning in the park.", ru: "Я бегаю каждое утро в парке." },
-            { en: "She does not run fast in the race.", ru: "Она не бегает быстро на гонке." },
-            { en: "Do they run to school every day?", ru: "Они бегают в школу каждый день?" },
-            { en: "You are running in the park now.", ru: "Ты сейчас бегаешь в парке." },
-            { en: "He is not running because he is tired.", ru: "Он не бежит, потому что устал." },
-            { en: "Are we running in the right direction?", ru: "Мы бежим в правильном направлении?" },
-            { en: "We ran quickly yesterday evening.", ru: "Мы быстро бежали вчера вечером." },
-            { en: "They did not run at all during the game.", ru: "Они совсем не бегали во время игры." },
-            { en: "Did she run to catch the bus?", ru: "Она бежала, чтобы успеть на автобус?" },
-            { en: "I was running when it started raining.", ru: "Я бежал, когда начался дождь." },
-            { en: "They will run in the marathon tomorrow.", ru: "Они побегут в марафоне завтра." },
-            { en: "She will not run because of her injury.", ru: "Она не побежит из-за травмы." },
 
-            // Write Sentences
-            { en: "I write emails every morning.", ru: "Я пишу электронные письма каждое утро." },
-            { en: "He does not write poems in his free time.", ru: "Он не пишет стихи в свободное время." },
-            { en: "Do they write letters to their friends often?", ru: "Они часто пишут письма своим друзьям?" },
+    // advise
+           // Present Simple
+{ en: "She always advises her friends wisely.", ru: "Она всегда разумно советует своим друзьям." },
+{ en: "He rarely advises others on personal matters.", ru: "Он редко даёт советы другим по личным вопросам." },
+{ en: "Do they often advise students properly?", ru: "Они часто дают студентам правильные советы?" },
+// Present Continuous
+{ en: "He is currently advising the team on the next steps.", ru: "Он сейчас советует команде, что делать дальше." },
+{ en: "They are not advising anyone professionally at the moment.", ru: "Они сейчас никому не советуют профессионально." },
+{ en: "Are you really advising him wisely on this issue?", ru: "Ты действительно даёшь ему мудрые советы по этому вопросу?" },
+// Present Perfect
+{ en: "She has already advised her clients carefully.", ru: "Она уже дала своим клиентам тщательные советы." },
+{ en: "We have not yet advised them fully on the project.", ru: "Мы ещё не дали им полного совета по проекту." },
+{ en: "Have they recently advised the company efficiently?", ru: "Они недавно давали эффективные советы компании?" },
+// Past Simple
+{ en: "He advised us clearly during the meeting.", ru: "Он дал нам ясный совет во время встречи." },
+{ en: "They did not advise me properly last time.", ru: "Они не дали мне должного совета в прошлый раз." },
+{ en: "Did she strongly advise you against taking that job?", ru: "Она настоятельно советовала тебе не брать ту работу?" },
+// Past Continuous
+{ en: "I was carefully advising her when you interrupted.", ru: "Я давал ей осторожный совет, когда ты перебил." },
+{ en: "They were not seriously advising their colleagues during the discussion.", ru: "Они не давали серьёзных советов своим коллегам во время обсуждения." },
+{ en: "Was he really advising you sincerely at that moment?", ru: "Он действительно искренне советовал тебе в тот момент?" },
+// Past Perfect
+{ en: "She had already advised him firmly before he made his decision.", ru: "Она уже твёрдо посоветовала ему, прежде чем он принял решение." },
+{ en: "We had not thoroughly advised them before the deadline.", ru: "Мы не успели тщательно проконсультировать их до крайнего срока." },
+{ en: "Had they honestly advised you before the problem occurred?", ru: "Они честно консультировали тебя до того, как возникла проблема?" },
+// Future Simple
+{ en: "He will surely advise you wisely tomorrow.", ru: "Он обязательно даст тебе мудрый совет завтра." },
+{ en: "I will not advise them quickly without thinking.", ru: "Я не буду давать им поспешных советов без размышлений." },
+{ en: "Will they carefully advise us on the next steps?", ru: "Они дадут нам тщательные советы по дальнейшим шагам?" },
 
-            // Present Continuous
-            { en: "She is writing a novel right now.", ru: "Она сейчас пишет роман." },
-            { en: "They are not writing their homework at the moment.", ru: "Они сейчас не пишут домашнюю работу." },
-            { en: "Are you writing a letter to your cousin?", ru: "Ты пишешь письмо своему двоюродному брату?" },
 
-            // Past Simple
-            { en: "He wrote a report yesterday.", ru: "Он написал отчёт вчера." },
-            { en: "We did not write anything during the meeting.", ru: "Мы ничего не писали во время встречи." },
-            { en: "Did she write the essay last night?", ru: "Она написала эссе вчера вечером?" },
+    // Present Simple
+{ en: "She always convinces her friends to try new things.", ru: "Она всегда убеждает своих друзей попробовать что-то новое." },
+{ en: "He rarely convinces anyone to change their opinion.", ru: "Он редко убеждает кого-либо изменить своё мнение." },
+{ en: "Do they often convince their clients to sign contracts?", ru: "Они часто убеждают своих клиентов подписывать контракты?" },
+// Present Continuous
+{ en: "He is currently convincing his boss to approve the budget.", ru: "Он сейчас убеждает своего начальника утвердить бюджет." },
+{ en: "They are not convincing the audience with their arguments at the moment.", ru: "Они сейчас не убеждают аудиторию своими аргументами." },
+{ en: "Are you convincing her to join the project?", ru: "Ты убеждаешь её присоединиться к проекту?" },
+// Present Perfect
+{ en: "She has already convinced the team to support her idea.", ru: "Она уже убедила команду поддержать её идею." },
+{ en: "We have not yet convinced the client to extend the deadline.", ru: "Мы ещё не убедили клиента продлить срок." },
+{ en: "Have they recently convinced the investors to fund the project?", ru: "Они недавно убедили инвесторов профинансировать проект?" },
+// Past Simple
+{ en: "He convinced the committee to approve the proposal.", ru: "Он убедил комитет одобрить предложение." },
+{ en: "They did not convince the manager to accept their plan.", ru: "Они не убедили менеджера принять их план." },
+{ en: "Did she convince the team to finish the task early?", ru: "Она убедила команду завершить задачу раньше?" },
+// Past Continuous
+{ en: "I was convincing him to stay longer when the meeting started.", ru: "Я убеждал его остаться дольше, когда началась встреча." },
+{ en: "They were not convincing the board effectively during the presentation.", ru: "Они неэффективно убеждали совет во время презентации." },
+{ en: "Was he convincing her to reconsider her decision at that time?", ru: "Он убеждал её пересмотреть своё решение в то время?" },
+// Past Perfect
+{ en: "She had convinced the client to sign the agreement before the deadline.", ru: "Она убедила клиента подписать соглашение до крайнего срока." },
+{ en: "They had not convinced the CEO to approve the changes before the announcement.", ru: "Они не убедили генерального директора утвердить изменения до объявления." },
+{ en: "Had he convinced you to join the team before the interview?", ru: "Он убедил тебя присоединиться к команде до собеседования?" },
+// Future Simple
+{ en: "He will convince the board to invest more next week.", ru: "Он убедит совет инвестировать больше на следующей неделе." },
+{ en: "I will not convince anyone to agree without solid evidence.", ru: "Я не буду никого убеждать соглашаться без веских доказательств." },
+{ en: "Will they convince the customers to upgrade their subscriptions?", ru: "Они убедят клиентов обновить свои подписки?" },
 
-            // Past Continuous
-            { en: "I was writing a letter when the phone rang.", ru: "Я писал письмо, когда зазвонил телефон." },
-            { en: "They were not writing when I entered the room.", ru: "Они не писали, когда я вошёл в комнату." },
-            { en: "Was he writing the project at 5 p.m. yesterday?", ru: "Он писал проект в 5 вечера вчера?" },
+// mention 
+    // Present Simple
+{ en: "He always mentions important details clearly.", ru: "Он всегда чётко упоминает важные детали." },
+{ en: "She rarely mentions her achievements openly.", ru: "Она редко открыто упоминает о своих достижениях." },
+{ en: "Do they frequently mention the challenges they face?", ru: "Они часто упоминают трудности, с которыми сталкиваются?" },
+// Present Continuous
+{ en: "She is currently mentioning some interesting facts.", ru: "Она сейчас упоминает некоторые интересные факты." },
+{ en: "They are not mentioning anything relevant at the moment.", ru: "Они сейчас не упоминают ничего важного." },
+{ en: "Are you casually mentioning the changes to the project?", ru: "Ты небрежно упоминаешь изменения в проекте?" },
+// Present Perfect
+{ en: "He has already mentioned this topic several times.", ru: "Он уже упомянул эту тему несколько раз." },
+{ en: "We have not yet mentioned the key points clearly.", ru: "Мы ещё не упомянули ключевые моменты ясно." },
+{ en: "Have they recently mentioned the new requirements?", ru: "Они недавно упоминали новые требования?" },
+// Past Simple
+{ en: "She mentioned her concerns briefly yesterday.", ru: "Она кратко упомянула свои опасения вчера." },
+{ en: "They did not mention the deadline during the meeting.", ru: "Они не упомянули крайний срок на встрече." },
+{ en: "Did he specifically mention the client’s feedback?", ru: "Он специально упомянул отзыв клиента?" },
+// Past Continuous
+{ en: "I was repeatedly mentioning the problem when they ignored me.", ru: "Я неоднократно упоминал проблему, когда они меня игнорировали." },
+{ en: "They were not seriously mentioning any solutions during the discussion.", ru: "Они не серьёзно упоминали решения во время обсуждения." },
+{ en: "Was she carefully mentioning the new policy yesterday?", ru: "Она вчера осторожно упоминала новую политику?" },
+// Past Perfect
+{ en: "He had clearly mentioned the risks before they started the project.", ru: "Он ясно упомянул о рисках до того, как они начали проект." },
+{ en: "They had not previously mentioned their intentions.", ru: "Они ранее не упоминали о своих намерениях." },
+{ en: "Had you briefly mentioned the issue before the manager arrived?", ru: "Ты кратко упомянул проблему до прихода менеджера?" },
+// Future Simple
+{ en: "She will undoubtedly mention this in her report tomorrow.", ru: "Она, несомненно, упомянет это в своём отчёте завтра." },
+{ en: "I will not casually mention sensitive topics next time.", ru: "Я не буду небрежно упоминать деликатные темы в следующий раз." },
+{ en: "Will they officially mention the results during the presentation?", ru: "Они официально упомянут результаты во время презентации?" }
 
-            // Future Simple
-            { en: "She will write a new story tomorrow.", ru: "Она напишет новый рассказ завтра." },
-            { en: "I will not write to him anymore.", ru: "Я больше не буду ему писать." },
-            { en: "Will they write the article by next week?", ru: "Они напишут статью к следующей неделе?" },
-
-            // Present Perfect
-            { en: "He has already written the introduction.", ru: "Он уже написал введение." },
-            { en: "We have not written any new chapters yet.", ru: "Мы ещё не написали ни одной новой главы." },
-            { en: "Have you written the notes for the lecture?", ru: "Ты написал конспект лекции?" },
-
-            // Past Perfect
-            { en: "She had written the book before it was published.", ru: "Она написала книгу до её публикации." },
-            { en: "They had not written the code before the deadline.", ru: "Они не написали код до крайнего срока." },
-            { en: "Had you written your homework before the teacher arrived?", ru: "Ты сделал домашнюю работу до прихода учителя?" }
 
         ];
+
+        let currentIndex = 0;
+
 
         function playAudio(text) {
             if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US'; // Set language to English (US)
+                utterance.lang = 'en-US';
                 window.speechSynthesis.speak(utterance);
             } else {
                 alert("Speech synthesis is not supported in your browser.");
             }
         }
 
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const generateButton = document.getElementById("generateLesson");
-            const checkButton = document.getElementById("checkSentence");
+        function setupDragAndDrop(sentence) {
+            const words = sentence.en.split(" ").sort(() => Math.random() - 0.5);
+            const wordBank = document.getElementById("wordBank");
+            const sentenceContainer = document.getElementById("sentenceContainer");
+            const instruction = document.getElementById("instruction");
             const feedback = document.getElementById("feedback");
 
-            function getRandomSentence() {
-                return sentences[Math.floor(Math.random() * sentences.length)];
-            }
-
-
-            function setupDragAndDrop(sentence) {
-
-
-                const words = sentence.en.split(" ").sort(() => Math.random() - 0.5);
-                const wordBank = document.getElementById("wordBank");
-                const sentenceContainer = document.getElementById("sentenceContainer");
-                const instruction = document.getElementById("instruction");
-
-                instruction.textContent = `"${sentence.ru}"`;
-                wordBank.innerHTML = "";
-                sentenceContainer.innerHTML = "";
-                feedback.textContent = "";
-
+            instruction.textContent = `"${sentence.ru}"`;
+            wordBank.innerHTML = "";
+            sentenceContainer.innerHTML = "";
+            feedback.textContent = "";
 
             words.forEach(word => {
                 const wordElement = document.createElement("span");
@@ -325,12 +345,12 @@
                 wordBank.appendChild(wordElement);
             });
 
-            checkButton.onclick = () => {
+            document.getElementById("checkSentence").onclick = () => {
                 const userSentence = Array.from(sentenceContainer.children)
                     .map(wordElement => wordElement.textContent)
                     .join(" ");
-                    playAudio(sentence.en); // Play the correct sentence
                 if (userSentence === sentence.en) {
+                    playAudio(sentence.en);
                     feedback.textContent = "Верно! 👍";
                     feedback.style.color = "green";
                 } else {
@@ -338,15 +358,37 @@
                     feedback.style.color = "red";
                 }
             };
-}
+        }
 
-            // Генерация первого урока при загрузке
-            setupDragAndDrop(getRandomSentence());
+        function showNextLesson() {
+            currentIndex = (currentIndex + 1) % sentences.length;
+            setupDragAndDrop(sentences[currentIndex]);
+        }
 
-            generateButton.addEventListener("click", () => {
-                setupDragAndDrop(getRandomSentence());
+        function showPreviousLesson() {
+            currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
+            setupDragAndDrop(sentences[currentIndex]);
+        }
+
+        function goToLesson(index) {
+            currentIndex = index;
+            setupDragAndDrop(sentences[currentIndex]);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupDragAndDrop(sentences[currentIndex]);
+
+            document.getElementById("generateLesson").addEventListener("click", showNextLesson);
+            document.getElementById("previousLesson").addEventListener("click", showPreviousLesson);
+
+            document.querySelectorAll(".index-button").forEach(button => {
+                button.addEventListener("click", () => {
+                    const index = parseInt(button.dataset.index);
+                    goToLesson(index);
+                });
             });
         });
+
     </script>
 </body>
 </html>
